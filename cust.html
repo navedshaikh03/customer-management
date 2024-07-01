@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="./cust.css">
+</head>
+
+<body>
+    <div class="wrapper">
+        <aside>
+            <div>
+                <h6 class="fw-bold p-2"><i class="bi bi-arrow-90deg-down"></i>Customer Management</h6>
+            </div>
+            <div class="">
+                <p class="p-2"><i class="bi bi-house-door"></i>Dashboard</p>
+                <p class="p-2 active fw-bold"><i class="bi bi-people"></i>Customers</p>
+                <p class="p-2"><i class="bi bi-box"></i>Products</p>
+                <p class="p-2"><i class="bi bi-cart"></i>Orders</p>
+            </div>
+        </aside>
+        <div class="w-100">
+            <nav class="navbar">
+                <h1 class="px-5">Customer Management</h1>
+                <div class=" input-btn-wrapper">
+                    <input type="text" class="form-control form-input" id="search-input" placeholder="Search ...">
+                    <div class="modal-btn">
+                        <button id="mySizeChart" class="btn add-btn ">Add Customer</button>
+                        <div id="mySizeChartModal" class="ebcf_modal">
+                            <div class="ebcf_modal-content">
+                                <span class="ebcf_close">&times;</span>
+                                <h1>Add Customer</h1>
+                                <p>Enter the details for new customer</p>
+                                <form action="" method="post" name="form">
+                                    <div class="d-flex justify-content-evenly">
+                                        <label>Name </label>
+                                        <input type="text" name="name" id="name" required>
+                                    </div>
+                                    <div class="d-flex justify-content-evenly">
+                                        <label for="">Email</label>
+                                        <input type="email" name="email" id="email" required>
+                                    </div>
+                                    <div class="d-flex justify-content-evenly">
+                                        <label for="">Phone</label>
+                                        <input type="number" name="phone" id="phone" required>
+                                    </div>
+                                    <div class="d-flex justify-content-evenly text-center">
+                                        <label for="">DOB</label>
+                                        <input type="date" name="dob" id="dob" required>
+                                    </div>
+                                    <div class="d-flex justify-content-evenly">
+                                        <label for="">Address</label>
+                                        <input type="text" name="address" id="address" required>
+                                    </div>
+                                </form>
+                                <div class="modal-footer">
+                                    <button class="btn btn-outline-primary px-2" onclick="closeModal()">Cancel</button>
+                                    <input type="submit" value="Add" class="btn btn-primary" onclick="addcust()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </nav>
+            <!-- bootstrap modal -->
+            <div class="modal " id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">Edit Item</h5>
+                        </div>
+                        <div class="modal-body">
+                            <!-- The edit form will be rendered here -->
+                            <form id="edit-form">
+                                <!-- form fields will be generated dynamically -->
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-primary" onclick="closeModal()"
+                                data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="save-edit-btn">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Date Of Birth</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="myTable">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script>
+        var ebModal = document.getElementById('mySizeChartModal');
+
+        var ebBtn = document.getElementById("mySizeChart");
+
+        var ebSpan = document.getElementsByClassName("ebcf_close")[0];
+
+        ebBtn.onclick = function () {
+            ebModal.style.display = "block";
+        }
+
+        ebSpan.onclick = function () {
+            ebModal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target == ebModal) {
+                ebModal.style.display = "none";
+            }
+        }
+
+        var arr = JSON.parse(localStorage.getItem("users") || "[]");
+        const nameTemp = document.getElementById('name')
+        const emailTemp = document.getElementById('email')
+        const phoneTemp = document.getElementById('phone')
+        const dobTemp = document.getElementById('dob')
+        const addressTemp = document.getElementById('address')
+
+        function addcust() {
+            arr.push({
+                name: nameTemp.value,
+                email: emailTemp.value,
+                phone: phoneTemp.value,
+                dob: dobTemp.value,
+                address: addressTemp.value
+            })
+            localStorage.setItem("users", JSON.stringify(arr));
+            window.location.reload(true);
+        }
+
+        $('#search-input').on('keyup', function () {
+            var value = $(this).val();
+            var data = searchTable(value, arr)
+            buildTable(data)
+        })
+
+        function searchTable(value, data) {
+            var filterData = []
+            for (var i = 0; i < data.length; i++) {
+                value = value.toLowerCase()
+                var name = data[i].name.toLowerCase()
+                if (name.includes(value)) {
+                    filterData.push(data[i])
+                }
+            }
+            return filterData;
+        }
+        function buildTable(array) {
+            var table = document.getElementById("myTable")
+            table.innerHTML = null
+            for (var i = 0; i < array.length; i++) {
+                var row = `<tr>
+                <td scope="row">${array[i].name}</td>
+							<td>${array[i].email}</td>
+							<td>${array[i].phone}</td>
+							<td>${array[i].dob}</td>
+                            <td>${array[i].address}</td>
+                            <td> <i class="bi bi-pencil" onclick="editItem('${array[i].name}')"></i><i class="bi bi-trash" onclick="deleteItem('${array[i].name}')"></td>
+					  </tr>`
+                table.innerHTML += row
+            }
+        }
+
+        buildTable(arr)
+
+        function deleteItem(name) {
+            arr = arr.filter((item) => item.name !== name);
+            buildTable(arr);
+            localStorage.setItem("users", JSON.stringify(arr));
+        }
+
+        // edit
+        function editItem(name) {
+            const item = arr.find((item) => item.name === name);
+            if (item) {
+                const editForm = `
+      <label>Name:</label>
+      <input type="text" value="${item.name}" id="edit-name" />
+      <br />
+      <label>Email:</label>
+      <input type="email" value="${item.email}" id="edit-email" />
+      <br />
+      <label>Phone:</label>
+      <input type="tel" value="${item.phone}" id="edit-phone" />
+      <br />
+      <label>DOB:</label>
+      <input type="date" value="${item.dob}" id="edit-dob" />
+      <br />
+      <label>Address:</label>
+      <input type="text" value="${item.address}" id="edit-address" />
+    `;
+                const editFormElement = document.getElementById("edit-form");
+                editFormElement.innerHTML = editForm;
+
+                $('#editModal').modal('show');
+                document.getElementById("save-edit-btn").addEventListener("click", () => {
+                    saveEdit(name);
+                });
+            }
+        }
+
+        function saveEdit(name) {
+            const item = arr.find((item) => item.name === name);
+            if (item) {
+                item.name = document.getElementById("edit-name").value;
+                item.email = document.getElementById("edit-email").value;
+                item.phone = document.getElementById("edit-phone").value;
+                item.dob = document.getElementById("edit-dob").value;
+                item.address = document.getElementById("edit-address").value;
+                buildTable(arr);
+                localStorage.setItem("users", JSON.stringify(arr));
+                $('#editModal').modal('hide');
+            }
+        }
+        function closeModal() {
+            location.reload(true);
+        }
+    </script>
+</body>
+
+</html>
